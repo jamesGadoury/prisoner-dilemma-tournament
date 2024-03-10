@@ -18,7 +18,7 @@ fun main() = runBlocking {
     val combos = getAgentCombinations()
     println("number of games that will be played: ${combos.size}")
 
-    val jobs = combos.indices.map {i ->
+    combos.indices.map {i ->
         launch {
             val combo = combos[i]
             val game = playGame(combo.first, combo.second, 0.996)
