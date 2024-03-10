@@ -7,8 +7,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 
 fun main() = runBlocking {
-    val redisHost = System.getenv("REDIS_HOST") ?: "localhost"
-    val jedis = JedisPooled(redisHost, 6379)
+    val jedis = JedisPooled(System.getenv("REDIS_HOST") ?: "localhost", 6379)
 
     Agents.register("alwaysCoop", ::alwaysCooperate)
     Agents.register("alwaysDefect", ::alwaysDefect)
@@ -32,9 +31,7 @@ fun main() = runBlocking {
 
     val agentScores: MutableMap<String, Int> = Agents.getAgentIds().associateWith { 0 }.toMutableMap()
     for (i in combos.indices) {
-        val req = jedis.get("game${i}")
-        if (req == null || req.isEmpty()) continue
-        val gameResult = Json.decodeFromString<GameResult>(req)
+        val gameResult = Json.decodeFromString<GameResult>(jedis.get("game$i"))
 
         agentScores[gameResult.agent1Result.id] =
             agentScores[gameResult.agent1Result.id]!! + gameResult.agent1Result.totalScore
