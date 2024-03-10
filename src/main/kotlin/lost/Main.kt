@@ -7,7 +7,8 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 
 fun main() = runBlocking {
-    val jedis = JedisPooled("localhost", 6379)
+    val redisHost = System.getenv("REDIS_HOST") ?: "localhost"
+    val jedis = JedisPooled(redisHost, 6379)
 
     Agents.register("alwaysCoop", ::alwaysCooperate)
     Agents.register("alwaysDefect", ::alwaysDefect)
