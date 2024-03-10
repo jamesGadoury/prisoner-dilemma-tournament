@@ -15,16 +15,16 @@ object Agents {
         registered[id] = f
     }
 
-    fun getAgentFunction(id: String) : AgentFunction?  {
+    fun getAgentFunction(id: String): AgentFunction? {
         return registered[id]
     }
 
-    fun getAgentIds() : List<String> {
+    fun getAgentIds(): List<String> {
         return registered.keys.toList()
     }
 }
 
-fun getAgentCombinations() : List<Pair<String, String>> {
+fun getAgentCombinations(): List<Pair<String, String>> {
     val ids = Agents.getAgentIds()
     // first get all possible combinations between agents
     val combos = getCombinations(ids).toMutableList()

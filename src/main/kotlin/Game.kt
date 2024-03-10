@@ -7,6 +7,7 @@ data class Game(val agent1Id: String, val agent2Id: String, val rounds: List<Rou
 
 @Serializable
 data class AgentResultFromGame(val id: String, val totalScore: Int)
+
 @Serializable
 data class GameResult(val agent1Result: AgentResultFromGame, val agent2Result: AgentResultFromGame)
 
@@ -28,12 +29,12 @@ fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Rou
 fun playGame(agent1Id: String, agent2Id: String, continueProbability: Double): Game {
     val rounds = mutableListOf<Round>()
     while (Random.nextFloat() <= continueProbability) {
-       rounds.addLast(playRound(agent1Id, agent2Id, rounds))
+        rounds.addLast(playRound(agent1Id, agent2Id, rounds))
     }
     return Game(agent1Id, agent2Id, rounds)
 }
 
-fun evaluateGame(game: Game) : GameResult {
+fun evaluateGame(game: Game): GameResult {
     var agent1Score = 0
     var agent2Score = 0
     // for now just count all the rounds and see who won or tied
