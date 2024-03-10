@@ -36,11 +36,12 @@ fun <T> getCombinations(c: List<T>) : List<Pair<T, T>> {
 fun main() = runBlocking {
     val jedis = JedisPooled("localhost", 6379)
 
-    for (i in 0..3) {
-        Agents.register("alwaysCoop$i", ::alwaysCooperate)
-        Agents.register("alwaysDefect$i", ::alwaysDefect)
+    Agents.register("alwaysCoop", ::alwaysCooperate)
+    Agents.register("alwaysDefect", ::alwaysDefect)
+    Agents.register("titForTat", ::titForTat)
+
+    for (i in 0..10) {
         Agents.register("randomAction$i", ::randomAction)
-        Agents.register("titForTat$i", ::titForTat)
     }
 
     val combos = getCombinations(Agents.getAgentIds())
@@ -59,8 +60,8 @@ fun main() = runBlocking {
 
     val agentWins: MutableMap<String, Int> = Agents.getAgentIds().associateWith { 0 }.toMutableMap()
     for (i in combos.indices) {
-        val winningId = jedis.get("game${i}").toString()
-        if (winningId.isEmpty()) continue
+        val winningId = jedis.get("game${i}")
+        if (winningId == null || winningId.isEmpty()) continue
         agentWins[winningId] = agentWins[winningId]!! + 1
     }
 
