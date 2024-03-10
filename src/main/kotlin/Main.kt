@@ -25,6 +25,15 @@ fun titForTat(agentId: String, priorRounds: List<Round>) : Action {
     return if (agentId == lastRound.first.id) lastRound.second.action else lastRound.first.action
 }
 
+fun retaliate(agentId: String, priorRounds: List<Round>) : Action {
+    if (priorRounds.isEmpty()) return Action.Cooperate
+    for (round in priorRounds) {
+        val otherPlayerAction = if (agentId == round.first.id) round.second.action else round.first.action
+        if (otherPlayerAction == Action.Defect) return Action.Defect
+    }
+    return Action.Cooperate
+}
+
 fun <T> getCombinations(c: List<T>) : List<Pair<T, T>> {
     val pairs = mutableListOf<Pair<T, T>>()
     for (i in 0..<c.size-1) {
@@ -53,6 +62,7 @@ fun main() = runBlocking {
     Agents.register("alwaysCoop", ::alwaysCooperate)
     Agents.register("alwaysDefect", ::alwaysDefect)
     Agents.register("titForTat", ::titForTat)
+    Agents.register("retaliate", ::retaliate)
     Agents.register("randomAction", ::randomAction)
 
     val combos = getAgentCombinations()
@@ -61,7 +71,7 @@ fun main() = runBlocking {
     val jobs = combos.indices.map {i ->
         launch {
             val combo = combos[i]
-            val game = playGame(combo.first, combo.second, 0.3)
+            val game = playGame(combo.first, combo.second, 0.2)
             val status = jedis.set("game${i}", Json.encodeToString<GameResult>(evaluateGame(game)))
             if ("OK" != status) {
                 println("$i execution had error")
