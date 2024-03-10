@@ -36,18 +36,27 @@ fun <T> getCombinations(c: List<T>) : List<Pair<T, T>> {
     return pairs
 }
 
+fun getAgentCombinations() : List<Pair<String, String>> {
+    val ids = Agents.getAgentIds()
+   // first get all possible combinations between agents
+    val combos = getCombinations(ids).toMutableList()
+
+    // then get combos for each agent against itself
+    for (id in ids) {
+        combos.addLast(Pair(id, id))
+    }
+    return combos
+}
+
 fun main() = runBlocking {
     val jedis = JedisPooled("localhost", 6379)
 
     Agents.register("alwaysCoop", ::alwaysCooperate)
     Agents.register("alwaysDefect", ::alwaysDefect)
     Agents.register("titForTat", ::titForTat)
+    Agents.register("randomAction", ::randomAction)
 
-    for (i in 0..10) {
-        Agents.register("randomAction$i", ::randomAction)
-    }
-
-    val combos = getCombinations(Agents.getAgentIds())
+    val combos = getAgentCombinations()
     println("number of games that will be played: ${combos.size}")
 
     val jobs = combos.indices.map {i ->
