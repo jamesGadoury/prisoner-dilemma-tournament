@@ -1,7 +1,7 @@
 package org.lost
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
+import kotlin.random.Random
 
 enum class Action {
     Cooperate, Defect
@@ -10,7 +10,7 @@ enum class Action {
 data class AgentPlay(val id: String, val action: Action, val reward: Int)
 typealias Round = Pair<AgentPlay, AgentPlay>
 typealias AgentFunction = (String, List<Round>) -> Action
-data class Game(val agent1Id: String, val agent2Id: String, val gameLength: Int, val rounds: List<Round>)
+data class Game(val agent1Id: String, val agent2Id: String, val rounds: List<Round>)
 
 object Agents {
     private val registered = mutableMapOf<String, AgentFunction>()
@@ -42,12 +42,12 @@ fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Rou
     return Round(AgentPlay(agent1Id, agent1Action, agent1Score), AgentPlay(agent2Id, agent2Action, agent2Score))
 }
 
-fun playGame(gameLength: Int, agent1Id: String, agent2Id: String): Game {
+fun playGame(agent1Id: String, agent2Id: String, probabilityOfEnding: Double): Game {
     val rounds = mutableListOf<Round>()
-    for (i in 0..gameLength) {
+    while (Random.nextFloat() <= probabilityOfEnding) {
        rounds.addLast(playRound(agent1Id, agent2Id, rounds))
     }
-    return Game(agent1Id, agent2Id, gameLength, rounds)
+    return Game(agent1Id, agent2Id, rounds)
 }
 
 @Serializable

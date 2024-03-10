@@ -6,7 +6,6 @@ import redis.clients.jedis.JedisPooled
 import kotlin.random.Random
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
 
 fun alwaysCooperate(agentId: String, priorRounds: List<Round>) : Action {
     return Action.Cooperate
@@ -62,7 +61,7 @@ fun main() = runBlocking {
     val jobs = combos.indices.map {i ->
         launch {
             val combo = combos[i]
-            val game = playGame(10, combo.first, combo.second)
+            val game = playGame(combo.first, combo.second, 0.3)
             val status = jedis.set("game${i}", Json.encodeToString<GameResult>(evaluateGame(game)))
             if ("OK" != status) {
                 println("$i execution had error")
