@@ -1,4 +1,4 @@
-package org.lost
+package lost
 
 fun <T> getCombinations(c: List<T>): List<Pair<T, T>> {
     val pairs = mutableListOf<Pair<T, T>>()

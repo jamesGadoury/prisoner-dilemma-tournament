@@ -1,4 +1,4 @@
-package org.lost
+package lost
 
 enum class Action {
     Cooperate, Defect

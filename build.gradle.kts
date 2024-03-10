@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.serialization") version "1.9.23"
+    application
 }
 
 group = "org.lost"
@@ -17,6 +18,16 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+}
+
+application {
+    mainClass = "lost.MainKt"
+}
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "lost.MainKt"
+    }
 }
 
 tasks.test {

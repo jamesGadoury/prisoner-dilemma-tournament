@@ -1,4 +1,4 @@
-package org.lost
+package lost
 
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

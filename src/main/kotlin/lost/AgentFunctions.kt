@@ -1,4 +1,4 @@
-package org.lost
+package lost
 
 import kotlin.random.Random
 
