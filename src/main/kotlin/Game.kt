@@ -25,9 +25,9 @@ fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Rou
     return Round(AgentPlay(agent1Id, agent1Action, agent1Score), AgentPlay(agent2Id, agent2Action, agent2Score))
 }
 
-fun playGame(agent1Id: String, agent2Id: String, probabilityOfEnding: Double): Game {
+fun playGame(agent1Id: String, agent2Id: String, continueProbability: Double): Game {
     val rounds = mutableListOf<Round>()
-    while (Random.nextFloat() <= probabilityOfEnding) {
+    while (Random.nextFloat() <= continueProbability) {
        rounds.addLast(playRound(agent1Id, agent2Id, rounds))
     }
     return Game(agent1Id, agent2Id, rounds)

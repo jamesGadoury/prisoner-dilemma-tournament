@@ -21,7 +21,7 @@ fun main() = runBlocking {
     val jobs = combos.indices.map {i ->
         launch {
             val combo = combos[i]
-            val game = playGame(combo.first, combo.second, 0.2)
+            val game = playGame(combo.first, combo.second, 0.996)
             val status = jedis.set("game${i}", Json.encodeToString<GameResult>(evaluateGame(game)))
             if ("OK" != status) {
                 println("$i execution had error")
