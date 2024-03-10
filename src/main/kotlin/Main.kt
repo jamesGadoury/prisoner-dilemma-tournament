@@ -4,6 +4,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import redis.clients.jedis.JedisPooled
 import kotlin.random.Random
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.decodeFromString
 
 fun alwaysCooperate(agentId: String, priorRounds: List<Round>) : Action {
     return Action.Cooperate
@@ -47,23 +50,31 @@ fun main() = runBlocking {
     val combos = getCombinations(Agents.getAgentIds())
     println("number of games that will be played: ${combos.size}")
 
-    for (i in combos.indices) {
+    val jobs = combos.indices.map {i ->
         launch {
             val combo = combos[i]
             val game = playGame(10, combo.first, combo.second)
-            val status = jedis.set("game${i}", evaluateGame(game))
+            val status = jedis.set("game${i}", Json.encodeToString<GameResult>(evaluateGame(game)))
             if ("OK" != status) {
                 println("$i execution had error")
             }
         }
+    }.map {job ->
+       job.join()
     }
 
-    val agentWins: MutableMap<String, Int> = Agents.getAgentIds().associateWith { 0 }.toMutableMap()
+    val agentScores: MutableMap<String, Int> = Agents.getAgentIds().associateWith { 0 }.toMutableMap()
     for (i in combos.indices) {
-        val winningId = jedis.get("game${i}")
-        if (winningId == null || winningId.isEmpty()) continue
-        agentWins[winningId] = agentWins[winningId]!! + 1
+        val req = jedis.get("game${i}")
+        if (req == null || req.isEmpty()) continue
+        val gameResult = Json.decodeFromString<GameResult>(req)
+        agentScores[gameResult.agent1Result.id] = agentScores[gameResult.agent1Result.id]!! + gameResult.agent1Result.totalScore
+        agentScores[gameResult.agent2Result.id] = agentScores[gameResult.agent2Result.id]!! + gameResult.agent2Result.totalScore
     }
 
-    println("winning agent id: ${agentWins.maxBy { it.value }.key}")
+    println("winning agent id: ${agentScores.maxBy { it.value }.key}")
+
+    for (agentScore in agentScores.toList().sortedByDescending { it.second }) {
+        println("${agentScore.first}: ${agentScore.second}")
+    }
 }

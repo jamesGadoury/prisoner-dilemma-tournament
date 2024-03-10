@@ -1,5 +1,8 @@
 package org.lost
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+
 enum class Action {
     Cooperate, Defect
 }
@@ -7,7 +10,7 @@ enum class Action {
 data class AgentPlay(val id: String, val action: Action, val reward: Int)
 typealias Round = Pair<AgentPlay, AgentPlay>
 typealias AgentFunction = (String, List<Round>) -> Action
-data class Game(val gameLength: Int, val rounds: List<Round>)
+data class Game(val agent1Id: String, val agent2Id: String, val gameLength: Int, val rounds: List<Round>)
 
 object Agents {
     private val registered = mutableMapOf<String, AgentFunction>()
@@ -44,10 +47,15 @@ fun playGame(gameLength: Int, agent1Id: String, agent2Id: String): Game {
     for (i in 0..gameLength) {
        rounds.addLast(playRound(agent1Id, agent2Id, rounds))
     }
-    return Game(gameLength, rounds)
+    return Game(agent1Id, agent2Id, gameLength, rounds)
 }
 
-fun evaluateGame(game: Game) : String {
+@Serializable
+data class AgentResultFromGame(val id: String, val totalScore: Int)
+@Serializable
+data class GameResult(val agent1Result: AgentResultFromGame, val agent2Result: AgentResultFromGame)
+
+fun evaluateGame(game: Game) : GameResult {
     var agent1Score = 0
     var agent2Score = 0
     // for now just count all the rounds and see who won or tied
@@ -56,11 +64,5 @@ fun evaluateGame(game: Game) : String {
         agent2Score += round.second.reward
     }
 
-    return if (agent1Score == agent2Score) {
-        ""
-    } else if (agent1Score > agent2Score) {
-        game.rounds.first().first.id
-    } else {
-        game.rounds.first().second.id
-    }
+    return GameResult(AgentResultFromGame(game.agent1Id, agent1Score), AgentResultFromGame(game.agent2Id, agent2Score))
 }
