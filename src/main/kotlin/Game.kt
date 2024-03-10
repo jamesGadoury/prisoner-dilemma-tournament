@@ -3,29 +3,12 @@ package org.lost
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
-enum class Action {
-    Cooperate, Defect
-}
-
-data class AgentPlay(val id: String, val action: Action, val reward: Int)
-typealias Round = Pair<AgentPlay, AgentPlay>
-typealias AgentFunction = (String, List<Round>) -> Action
 data class Game(val agent1Id: String, val agent2Id: String, val rounds: List<Round>)
 
-object Agents {
-    private val registered = mutableMapOf<String, AgentFunction>()
-    fun register(id: String, f: AgentFunction) {
-        registered[id] = f
-    }
-
-    fun getAgentFunction(id: String) : AgentFunction?  {
-        return registered[id]
-    }
-
-    fun getAgentIds() : List<String> {
-        return registered.keys.toList()
-    }
-}
+@Serializable
+data class AgentResultFromGame(val id: String, val totalScore: Int)
+@Serializable
+data class GameResult(val agent1Result: AgentResultFromGame, val agent2Result: AgentResultFromGame)
 
 fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Round {
     val agent1Action = Agents.getAgentFunction(agent1Id)!!(agent1Id, priorRounds)
@@ -49,11 +32,6 @@ fun playGame(agent1Id: String, agent2Id: String, probabilityOfEnding: Double): G
     }
     return Game(agent1Id, agent2Id, rounds)
 }
-
-@Serializable
-data class AgentResultFromGame(val id: String, val totalScore: Int)
-@Serializable
-data class GameResult(val agent1Result: AgentResultFromGame, val agent2Result: AgentResultFromGame)
 
 fun evaluateGame(game: Game) : GameResult {
     var agent1Score = 0
