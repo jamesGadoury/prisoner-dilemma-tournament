@@ -57,10 +57,10 @@ fun evaluateGame(game: Game) : String {
     }
 
     return if (agent1Score == agent2Score) {
-        "Tie"
+        ""
     } else if (agent1Score > agent2Score) {
-        "${game.rounds.first().first.id} won"
+        game.rounds.first().first.id
     } else {
-        "${game.rounds.first().second.id} won"
+        game.rounds.first().second.id
     }
 }

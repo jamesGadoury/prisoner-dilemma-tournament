@@ -36,7 +36,6 @@ fun <T> getCombinations(c: List<T>) : List<Pair<T, T>> {
 fun main() = runBlocking {
     val jedis = JedisPooled("localhost", 6379)
 
-    // generate 3 agents of each type
     for (i in 0..3) {
         Agents.register("alwaysCoop$i", ::alwaysCooperate)
         Agents.register("alwaysDefect$i", ::alwaysDefect)
@@ -47,7 +46,7 @@ fun main() = runBlocking {
     val combos = getCombinations(Agents.getAgentIds())
     println("number of games that will be played: ${combos.size}")
 
-    for (i in 0..<combos.size) {
+    for (i in combos.indices) {
         launch {
             val combo = combos[i]
             val game = playGame(10, combo.first, combo.second)
@@ -57,4 +56,13 @@ fun main() = runBlocking {
             }
         }
     }
+
+    val agentWins: MutableMap<String, Int> = Agents.getAgentIds().associateWith { 0 }.toMutableMap()
+    for (i in combos.indices) {
+        val winningId = jedis.get("game${i}").toString()
+        if (winningId.isEmpty()) continue
+        agentWins[winningId] = agentWins[winningId]!! + 1
+    }
+
+    println("winning agent id: ${agentWins.maxBy { it.value }.key}")
 }
