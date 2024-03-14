@@ -49,3 +49,9 @@ fun evaluateGame(game: Game): GameResult {
 
     return GameResult(AgentResultFromGame(game.agent1Id, agent1Score), AgentResultFromGame(game.agent2Id, agent2Score))
 }
+
+fun opponentActionsReversed(selfId: String, priorRounds: List<Round>): Sequence<Action> = sequence {
+    for (round in priorRounds.reversed()) {
+        yield(if (selfId == round.first.id) round.second.action else round.first.action)
+    }
+}
