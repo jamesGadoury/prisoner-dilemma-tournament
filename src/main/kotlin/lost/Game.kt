@@ -11,10 +11,8 @@ data class AgentResultFromGame(val id: String, val totalScore: Int)
 @Serializable
 data class GameResult(val agent1Result: AgentResultFromGame, val agent2Result: AgentResultFromGame)
 
-fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Round {
-    val agent1Action = Agents.getAgentFunction(agent1Id)!!(agent1Id, priorRounds)
-    val agent2Action = Agents.getAgentFunction(agent2Id)!!(agent2Id, priorRounds)
-    val (agent1Score, agent2Score) = if (agent1Action == Action.Cooperate && agent2Action == Action.Cooperate) {
+fun scoreRound(agent1Action: Action, agent2Action: Action): Pair<Int, Int> {
+    return if (agent1Action == Action.Cooperate && agent2Action == Action.Cooperate) {
         Pair(3, 3)
     } else if (agent1Action == Action.Defect && agent2Action == Action.Defect) {
         Pair(1, 1)
@@ -23,6 +21,12 @@ fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Rou
     } else {
         Pair(0, 5)
     }
+}
+
+fun playRound(agent1Id: String, agent2Id: String, priorRounds: List<Round>): Round {
+    val agent1Action = Agents.getAgentFunction(agent1Id)!!(agent1Id, priorRounds)
+    val agent2Action = Agents.getAgentFunction(agent2Id)!!(agent2Id, priorRounds)
+    val (agent1Score, agent2Score) = scoreRound(agent1Action, agent2Action)
     return Round(AgentPlay(agent1Id, agent1Action, agent1Score), AgentPlay(agent2Id, agent2Action, agent2Score))
 }
 
