@@ -1,9 +1,11 @@
 doctype html
 html
   head
-    title Fastify Redis Example
+    title Prisoner's Dilemma Tournament
   body
     h1 Tournament Results
+    h3='Winner: ' + winner
     ul
         each game, index in games
-            li= 'Game ' + index + ': ' + game
+            - var parsedGame = JSON.parse(game)
+            li= 'Game ' + index + ': ' + parsedGame.agent1Result.id + ': ' + parsedGame.agent1Result.totalScore + ', ' + parsedGame.agent2Result.id + ': ' + parsedGame.agent2Result.totalScore

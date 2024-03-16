@@ -25,6 +25,9 @@ app.register(pointOfView, {
 app.get('/', async (request, reply) => {
     const redis = app.redis;
 
+    const winner = await redis.get("winner");
+    console.log(winner);
+
     const games: string[] = [];
 
     for (let i = 0;; i++) {
@@ -35,7 +38,7 @@ app.get('/', async (request, reply) => {
         games.push(game);
     }
 
-    return reply.view('/index.pug', { games });
+    return reply.view('/index.pug', { winner, games });
 });
 
 // Run the server

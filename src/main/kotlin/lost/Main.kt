@@ -50,7 +50,14 @@ fun main() = runBlocking {
             agentScores[gameResult.agent2Result.id]!! + gameResult.agent2Result.totalScore
     }
 
-    println("winning agent id: ${agentScores.maxBy { it.value }.key}")
+    val winningAgentId = agentScores.maxBy { it.value }.key
+    println("winning agent id: $winningAgentId")
+
+    val status = jedis.set("winner", winningAgentId)
+    if ("OK" != status) {
+        // TODO should we be throwing or doing something other than printing?
+        println("execution had error")
+    }
 
     for (agentScore in agentScores.toList().sortedByDescending { it.second }) {
         println("${agentScore.first}: ${agentScore.second}")
