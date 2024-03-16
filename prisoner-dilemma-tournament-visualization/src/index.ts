@@ -24,10 +24,18 @@ app.register(pointOfView, {
 // Declare a route
 app.get('/', async (request, reply) => {
     const redis = app.redis;
-    // Retrieve value from Redis
-    const value = await redis.get('game0');
-    // Render template with the value
-    return reply.view('/index.pug', { value });
+
+    const games: string[] = [];
+
+    for (let i = 0;; i++) {
+        const game = await redis.get(`game${i}`);
+        if (game === null) {
+            break;
+        }
+        games.push(game);
+    }
+
+    return reply.view('/index.pug', { games });
 });
 
 // Run the server
