@@ -22,8 +22,19 @@ fun main() = runBlocking {
         launch {
             val combo = combos[i]
             val game = playGame(combo.first, combo.second, 0.996)
+            val gameId = "game$i"
+            for ((roundNumber, round) in game.rounds.withIndex()) {
+                for (agentPlay in round.toList()) {
+                    val status = jedis.set("${gameId}|${roundNumber}|${agentPlay.id}", Json.encodeToString<AgentPlay>(agentPlay))
+                    if ("OK" != status) {
+                        // TODO should we be throwing or doing something other than printing?
+                        println("$i execution had error")
+                    }
+                }
+            }
             val status = jedis.set("game${i}", Json.encodeToString<GameResult>(evaluateGame(game)))
             if ("OK" != status) {
+                // TODO should we be throwing or doing something other than printing?
                 println("$i execution had error")
             }
         }

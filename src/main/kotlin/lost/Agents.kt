@@ -1,9 +1,12 @@
 package lost
 
+import kotlinx.serialization.Serializable
+
 enum class Action {
     Cooperate, Defect
 }
 
+@Serializable
 data class AgentPlay(val id: String, val action: Action, val reward: Int)
 
 typealias Round = Pair<AgentPlay, AgentPlay>
