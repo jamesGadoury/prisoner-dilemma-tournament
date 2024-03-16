@@ -1,0 +1,19 @@
+{
+  "name": "prisoner-dilemma-tournament-visualization",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/redis": "^6.1.1",
+    "fastify": "^4.26.2",
+    "point-of-view": "^6.3.0",
+    "pug": "^3.0.2"
+  }
+}

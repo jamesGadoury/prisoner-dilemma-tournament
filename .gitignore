@@ -40,3 +40,14 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+### Node JS ###
+**/node_modules/
+**/*.log
+**/*.env
+**/dist/
+**/.DS_Store
+**/*.tgz
+**/*.cache
+**/*.tmp
