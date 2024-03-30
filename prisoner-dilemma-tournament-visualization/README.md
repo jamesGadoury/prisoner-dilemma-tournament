@@ -7,7 +7,7 @@ Starts a server responsible for communicating with the Redis server and displayi
 npm run build
 ```
 
-## run
+## run w/ autoloading
 ```bash
-npm run start
+npm run dev
 ```
