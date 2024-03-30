@@ -5,8 +5,14 @@ import kotlinx.coroutines.runBlocking
 import redis.clients.jedis.JedisPooled
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.request.*
 
-fun main() = runBlocking {
+fun runSim() = runBlocking {
     val jedis = JedisPooled(System.getenv("REDIS_HOST") ?: "localhost", 6379)
 
     Agents.register("alwaysCoop", ::alwaysCooperate)
@@ -62,4 +68,20 @@ fun main() = runBlocking {
     for (agentScore in agentScores.toList().sortedByDescending { it.second }) {
         println("${agentScore.first}: ${agentScore.second}")
     }
+}
+
+fun main() {
+    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+        routing {
+            get("/") {
+                call.respondText("Hello from Simulation Server.")
+            }
+
+            post("/run") {
+                val requestBody = call.receiveText()
+                runSim()
+                call.respondText("Finished sim.")
+            }
+        }
+    }.start(wait = true)
 }
