@@ -46,7 +46,9 @@ app.get('/', async (request, reply) => {
 app.post('/runButtonPressed', async (request, reply) => {
     console.log("run sim button was pressed, sending http request to simulation server...");
     // TODO should consume all configured ports as env variables
-    const response = await fetch('http://sim:8081/run', {
+    const host = process.env.SIM_SERVER_HOST ? process.env.SIM_SERVER_HOST : '127.0.0.1';
+    const port = process.env.SIM_SERVER_PORT ? process.env.SIM_SERVER_PORT : '8081';
+    const response = await fetch(`http://${host}:${port}/run`, {
         method: 'POST',
     });
 
@@ -59,7 +61,8 @@ app.post('/runButtonPressed', async (request, reply) => {
 // Run the server
 const start = async () => {
     try {
-        await app.listen({ host: '0.0.0.0', port: 3000 });
+        const port: number = process.env.PORT ? Number(process.env.PORT) : 3000;
+        await app.listen({ host: '0.0.0.0', port: port });
     } catch (err) {
         app.log.error(err);
         process.exit(1);

@@ -18,5 +18,8 @@ services:
       - sim
     environment:
       - REDIS_HOST=redis
+      - SIM_SERVER_HOST=sim
+      - SIM_SERVER_PORT=8081
+      - PORT=3000
     ports:
       - "3000:3000"
