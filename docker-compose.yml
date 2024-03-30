@@ -11,3 +11,12 @@ services:
     image: "redis/redis-stack-server:latest"
     ports:
       - "6379:6379"
+  visualizer:
+    image: "prisoner-dilemma-visualizer:latest"
+    depends_on:
+      - redis
+      - sim
+    environment:
+      - REDIS_HOST=redis
+    ports:
+      - "3000:3000"

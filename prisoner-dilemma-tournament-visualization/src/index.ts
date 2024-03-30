@@ -8,7 +8,7 @@ const app = fastify({ logger: true });
 
 // Register the Redis plugin
 app.register(fastifyRedis, {
-    host: '127.0.0.1', // Change this to your Redis server's host
+    host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1', // Change this to your Redis server's host
     port: 6379 // Change this if your Redis server uses a different port
 });
 
@@ -23,6 +23,8 @@ app.register(pointOfView, {
 
 // Declare a route
 app.get('/', async (request, reply) => {
+    console.log("get request");
+
     const redis = app.redis;
 
     const winner = await redis.get("winner");
@@ -44,7 +46,7 @@ app.get('/', async (request, reply) => {
 app.post('/runButtonPressed', async (request, reply) => {
     console.log("run sim button was pressed, sending http request to simulation server...");
     // TODO should consume all configured ports as env variables
-    const response = await fetch('http://localhost:8081/run', {
+    const response = await fetch('http://sim:8081/run', {
         method: 'POST',
     });
 
@@ -57,7 +59,7 @@ app.post('/runButtonPressed', async (request, reply) => {
 // Run the server
 const start = async () => {
     try {
-        await app.listen({ port: 3000 });
+        await app.listen({ host: '0.0.0.0', port: 3000 });
     } catch (err) {
         app.log.error(err);
         process.exit(1);
