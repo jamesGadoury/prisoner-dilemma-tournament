@@ -15,6 +15,9 @@ import io.ktor.server.request.*
 fun runSim() = runBlocking {
     val jedis = JedisPooled(System.getenv("REDIS_HOST") ?: "localhost", 6379)
 
+    // TODO until we get unique ids added to prefix of all keys, flush db
+    jedis.flushDB();
+
     Agents.register("alwaysCoop", ::alwaysCooperate)
     Agents.register("alwaysDefect", ::alwaysDefect)
     Agents.register("titForTat", ::titForTat)
@@ -71,7 +74,7 @@ fun runSim() = runBlocking {
 }
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
+    embeddedServer(Netty, port = 8081, host = "0.0.0.0") {
         routing {
             get("/") {
                 call.respondText("Hello from Simulation Server.")
