@@ -3,6 +3,23 @@ html
   head
     title Prisoner's Dilemma Tournament
   body
+    button#runSimButton Run Simulation
+    script(type='text/javascript').
+        const runSimButton = document.getElementById('runSimButton')
+
+        runSimButton?.addEventListener('click', async () => {
+            // TODO How do we get the fastify server address here?
+            const response = await fetch('http://localhost:3000/runButtonPressed', {
+                method: 'POST',
+            });
+
+            const data = await response;
+            console.log(data)
+
+            // hacky trick to reload page so we pick up updates :)
+            location.reload();
+        })
+
     h1 Tournament Results
     h3='Winner: ' + winner
     ul
