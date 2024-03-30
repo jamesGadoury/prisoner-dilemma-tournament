@@ -9,7 +9,6 @@ docker compose up
 ```
 
 ## Todos
-- Update visualization server app to build into its own docker image & update docker compose
 - Move kotlin logic into its own subdir + build
 - Add new kotlin build logic to move main tournament function into a server that frontend can talk to
 - Make frontend output information about all rounds for each game
