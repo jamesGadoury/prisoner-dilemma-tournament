@@ -41,6 +41,19 @@ app.get('/', async (request, reply) => {
     return reply.view('/index.pug', { winner, games });
 });
 
+app.post('/runButtonPressed', async (request, reply) => {
+    console.log("run sim button was pressed, sending http request to simulation server...");
+    // TODO should consume all configured ports as env variables
+    const response = await fetch('http://localhost:8081/run', {
+        method: 'POST',
+    });
+
+    const data = await response;
+    console.log(data);
+
+    return data;
+})
+
 // Run the server
 const start = async () => {
     try {

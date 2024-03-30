@@ -74,6 +74,7 @@ fun runSim() = runBlocking {
 }
 
 fun main() {
+    // TODO should expose all configured ports as env variables
     embeddedServer(Netty, port = 8081, host = "0.0.0.0") {
         routing {
             get("/") {
