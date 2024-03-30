@@ -27,10 +27,13 @@ app.get('/', async (request, reply) => {
 
     const redis = app.redis;
 
-    const winner = await redis.get("winner");
-    console.log(winner);
-
+    let winner = await redis.get("winner");
     const games: string[] = [];
+
+    if (winner == null) {
+        winner = 'N/A';
+        return reply.view('/index.pug', { winner, games });
+    }
 
     for (let i = 0;; i++) {
         const game = await redis.get(`game${i}`);
