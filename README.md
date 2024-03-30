@@ -3,8 +3,11 @@
 ## To run
 
 ```
+# from base dir:
 ./run-build-sim
-
+# cd and build within prisoner-dilemma-tournament-visualization dir:
+./run-build-visualizer
+# from base dir:
 docker compose up
 ```
 
